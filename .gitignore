@@ -1,0 +1,6 @@
+*.vim
+*.pyc
+walk_log/
+walk_log*/
+log/
+visual/
