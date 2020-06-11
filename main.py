@@ -15,7 +15,7 @@ from utils import check_overfitting, early_stop, logger
 from train import train
 from metric import Recall, NDCG, MRR
 from config import CONFIG
-from test import test, mlp_test
+from test import test
 import loss
 from itertools import product
 import time
@@ -61,7 +61,7 @@ def main():
 
     #  metric
     metrics = [Recall(20), NDCG(20), Recall(40), NDCG(40), Recall(80), NDCG(80)]
-    TARGET = 'Recall@10'
+    TARGET = 'Recall@20'
 
     #  loss
     loss_func = loss.BPRLoss('mean')
@@ -88,7 +88,6 @@ def main():
 
         # model
         if CONFIG['model'] == 'BGCN':
-            model_type = '1model_3feature'
             graph = [ub_graph, ui_graph, bi_graph]
             info = BGCN_Info(64, decay, message_dropout, node_dropout, 1)
             model = BGCN(info, assist_data, graph, device, pretrain=None).to(device)

@@ -33,7 +33,7 @@ def to_tensor(graph):
     return graph
 
 def print_graph_density(graph, name):
-    print(name + 'density--------------------')
+    print(name + ' density--------------------')
     print(len(graph.data)/(graph.shape[0]*graph.shape[1])) 
 
 

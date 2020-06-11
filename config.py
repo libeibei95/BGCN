@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 CONFIG = {
-    'name': '@your_name',
-    'path': '.',
+    'name': '@changjianxin',
+    'path': './data',
     'log': './log',
     'visual': './visual',
-    'gpu_id': "0",
+    'gpu_id': "2",
     'note': 'some_note',
     'model': 'BGCN',
     'sample': 'simple',
@@ -17,7 +17,6 @@ CONFIG = {
     'node_dropouts' : [0, 0.1, 0.3, 0.5]     , 
     'decays' : [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2],
     'dataset_name': 'NetEase',
-    #  'dataset_name': 'Youshu',
     'mission': 'bundle',
     'conti_train': 'your_model.pth',
     'task': 'tune',

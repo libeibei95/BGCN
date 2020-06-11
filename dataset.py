@@ -29,7 +29,6 @@ def print_statistics(X, string):
     unique_nonzero_indice_b = np.unique(nonzero_col_indice)
     print(len(unique_nonzero_indice_u)/X.shape[0])
     print(len(unique_nonzero_indice_b)/X.shape[1])
-    print(len(nonzero_row_indice)==len(self.U_B_pairs))
     print('density', len(nonzero_row_indice)/(X.shape[0]*X.shape[1]))
 
 class BasicDataset(Dataset):
