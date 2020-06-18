@@ -7,8 +7,8 @@ import torch.nn.functional as F
 import scipy.sparse as sp 
 import numpy as np
 from .model_base import Info, Model
-from tqdm import tqdm
 from config import CONFIG
+
 
 def graph_generating(raw_graph, row, col):
     if raw_graph.shape == (row, col):
@@ -143,12 +143,12 @@ class BGCN(Model):
         return A_feature, B_feature
 
     def propagate(self):
-        #  ============================= atom propagation =============================
+        #  =============================  item level propagation  =============================
         atom_users_feature, atom_items_feature = self.one_propagate(
             self.atom_graph, self.users_feature, self.items_feature, self.dnns_atom)
         atom_bundles_feature = F.normalize(torch.matmul(self.pooling_graph, atom_items_feature))
 
-        #  ============================= non_atom propagation =============================
+        #  ============================= bundle level propagation =============================
         non_atom_users_feature, non_atom_bundles_feature = self.one_propagate(
             self.non_atom_graph, self.users_feature, self.bundles_feature, self.dnns_non_atom)
 

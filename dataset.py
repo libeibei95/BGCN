@@ -7,7 +7,7 @@ import numpy as np
 import scipy.sparse as sp 
 from torch.utils.data import Dataset
 from config import CONFIG
-from tqdm import tqdm
+
 
 def sparse_ones(indices, size, dtype=torch.float):
     one = torch.ones(indices.shape[1], dtype=dtype)
@@ -30,6 +30,7 @@ def print_statistics(X, string):
     print(len(unique_nonzero_indice_u)/X.shape[0])
     print(len(unique_nonzero_indice_b)/X.shape[1])
     print('density', len(nonzero_row_indice)/(X.shape[0]*X.shape[1]))
+
 
 class BasicDataset(Dataset):
     '''
@@ -107,7 +108,7 @@ class BundleTrainDataset(BasicDataset):
                         break
         elif CONFIG['sample'] == 'hard':
             hard_probability = round(np.random.uniform(0, 1), 1)
-            if  hard_probability <= CONFIG['b_hard_prob'][0]:
+            if  hard_probability <= CONFIG['hard_prob'][0]:
                 while True:
                     i = np.random.randint(self.u_b_for_neg_sample.shape[1])
                     b_n1 = self.u_b_for_neg_sample[user_b, i]
@@ -115,8 +116,8 @@ class BundleTrainDataset(BasicDataset):
                         all_bundles.append(b_n1)
                         if len(all_bundles) == self.neg_sample+1:
                             break
-            elif CONFIG['b_hard_prob'][0] < hard_probability \
-                <= CONFIG['b_hard_prob'][0] + CONFIG['b_hard_prob'][1]:
+            elif CONFIG['hard_prob'][0] < hard_probability \
+                <= CONFIG['hard_prob'][0] + CONFIG['hard_prob'][1]:
                 while True:
                     i = np.random.randint(self.b_b_for_neg_sample.shape[1])
                     b_n2 = self.b_b_for_neg_sample[pos_bundle, i]

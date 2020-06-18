@@ -9,10 +9,10 @@ import setproctitle
 import dataset
 from model import BGCN, BGCN_Info
 from utils import check_overfitting, early_stop, get_perf, logger 
-from train import simple_train, multi_train
+from train import train
 from metric import Recall, NDCG, MRR
 from config import CONFIG
-from test import test, mlp_test
+from test import test
 import loss
 import time
 import csv
@@ -44,29 +44,23 @@ def main():
 
     # log
     log = logger.Logger(os.path.join(
-        CONFIG['log'], CONFIG['model'], 
-        f"{CONFIG['dataset_name']}_{CONFIG['eval_task']}", TAG), 'best', checkpoint_target=TARGET)
+        CONFIG['log'], CONFIG['dataset_name'], 
+        f"{CONFIG['model']}_{CONFIG['eval_task']}", TAG), 'best', checkpoint_target=TARGET)
 
     # vis = VisShow('localhost', 16666,
     #               f'{CONFIG['dataset_name']}-{MODELTYPE.__name__}-{decay}-{lr}-{theta}-3layer')
 
-    DIRS = [
-            'your_model_dirs',
-           ]
-
-    for DIR in DIRS:
+    for DIR in CONFIG['test']:
         with open(os.path.join(DIR, 'model.csv'), 'r') as f:
             d = csv.DictReader(f)
             d = [line for line in d]
         for i in range(len(d)):
             s = d[i][None][0]
-            s1 = d[i][None][5]
             dd = {'hash': d[i]['hash'],
                   'embed_L2_norm': float(d[i][' embed_L2_norm']),
                   'mess_dropout': float(d[i][' mess_dropout']),
                   'node_dropout': float(d[i][' node_dropout']),
                   'lr': float(s[s.find(':') + 1:])}
-            #  print(dd)
 
             # model
             if CONFIG['model'] == 'BGCN':
@@ -77,24 +71,13 @@ def main():
             assert model.__class__.__name__ == CONFIG['model']
 
             model.load_state_dict(torch.load(
-                os.path.join(DIR, dd['hash']+"_Recall@10.pth")))
+                os.path.join(DIR, dd['hash']+"_Recall@20.pth")))
 
             # log
             log.update_modelinfo(info, {'lr': dd['lr']}, metrics)
 
-            #  temp
-            time_path = time.strftime('%m-%d-%H-%M-%S-', time.localtime(time.time()))
-            visual_path =  os.path.join(
-                CONFIG['visual'], CONFIG['model'], 
-                f"{CONFIG['dataset_name']}_{CONFIG['eval_task']}", 
-                f"{time_path}-{CONFIG['note']}")
-            visual_name = f"lr{dd['lr']}_decay{dd['embed_L2_norm']}_\
-                medr{dd['mess_dropout']}_nodr{dd['node_dropout']}"
-            visual_name = str(dd)
-            visual = [visual_path, visual_name]
-
-            epoch = 1
-            test(model, epoch+1, test_loader, device, CONFIG, metrics, visual)
+            # test
+            test(model, test_loader, device, CONFIG, metrics)
 
             # log
             log.update_log(metrics, model) 

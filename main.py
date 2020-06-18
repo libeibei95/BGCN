@@ -22,7 +22,6 @@ import time
 #  from utils.visshow import VisShow
 from tensorboardX import SummaryWriter
 
-TAG = ''
 
 def main():
     #  set env
@@ -69,7 +68,7 @@ def main():
     #  log
     log = logger.Logger(os.path.join(
         CONFIG['log'], CONFIG['dataset_name'], 
-        f"{CONFIG['model']}_{CONFIG['task']}", TAG), 'best', checkpoint_target=TARGET)
+        f"{CONFIG['model']}_{CONFIG['task']}", ''), 'best', checkpoint_target=TARGET)
 
     theta = 0.6
 
@@ -105,10 +104,10 @@ def main():
                }
         #  print(info)
 
-        #  continue train
+        #  continue training
         if CONFIG['sample'] == 'hard' and 'conti_train' in CONFIG:
             model.load_state_dict(torch.load(CONFIG['conti_train']))
-            print('load model and continue to train')
+            print('load model and continue training')
 
         retry = CONFIG['retry']  # =1
         while retry >= 0:

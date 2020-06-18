@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from time import time
 import os
 
-def test(model, epoch, loader, device, CONFIG, metrics):
+def test(model, loader, device, CONFIG, metrics):
     '''
     test for dot-based model
     '''
