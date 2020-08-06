@@ -22,7 +22,7 @@ def to_tensor(graph):
     return graph
 
 def print_statistics(X, string):
-    print('>'*10 + string + '>'*10 )
+    print('>'*10 + string + '>'*10)
     print('average interactions', X.sum(1).mean(0).item())
     nonzero_row_indice, nonzero_col_indice = X.nonzero()
     unique_nonzero_indice_u = np.unique(nonzero_row_indice)
@@ -88,13 +88,13 @@ class BundleTrainDataset(BasicDataset):
             u_b_from_i = item_data.ground_truth_u_i @ assist_data.ground_truth_b_i.T
             u_b_from_i = u_b_from_i.todense()
             bn1_window = [int(i*self.num_bundles) for i in CONFIG['hard_window']]
-            self.u_b_for_neg_sample = np.argsort(u_b_from_i, axis=1)[:,bn1_window[0]:bn1_window[1]]
+            self.u_b_for_neg_sample = np.argsort(u_b_from_i, axis=1)[:, bn1_window[0]:bn1_window[1]]
 
             #  2. b_p --> b_n2
             overlap_graph = assist_data.ground_truth_b_i @ assist_data.ground_truth_b_i.T
             overlap_graph = overlap_graph.todense()
             bn2_window = [int(i*self.num_bundles) for i in CONFIG['hard_window']]
-            self.b_b_for_neg_sample = np.argsort(overlap_graph, axis=1)[:,bn2_window[0]:bn2_window[1]]
+            self.b_b_for_neg_sample = np.argsort(overlap_graph, axis=1)[:, bn2_window[0]:bn2_window[1]]
 
     def __getitem__(self, index):
         user_b, pos_bundle = self.U_B_pairs[index]
@@ -181,7 +181,7 @@ class ItemDataset(BasicDataset):
         user_i, pos_item = self.U_I_pairs[index]
         all_items = [pos_item]
         while True:
-            j = np.random.randint(self.num_items)
+            j = np.random.randint(self.num_items) # 随机抽取负样本
             if self.ground_truth_u_i[user_i, j] == 0 and not j in all_items:
                 all_items.append(j)
                 if len(all_items) == self.neg_sample+1:

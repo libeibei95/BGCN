@@ -27,7 +27,7 @@ def main():
     #  set env
     setproctitle.setproctitle(f"train{CONFIG['name']}")
     os.environ["CUDA_VISIBLE_DEVICES"] = CONFIG['gpu_id']
-    device = torch.device('cuda')
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     #  fix seed
     seed = 123
@@ -79,7 +79,7 @@ def main():
         # vis = VisShow('localhost', 16666,
         #               f'{CONFIG['dataset_name']}-{MODELTYPE.__name__}-{decay}-{lr}-{theta}-3layer')
 
-        visual_path =  os.path.join(CONFIG['visual'], 
+        visual_path = os.path.join(CONFIG['visual'],
                                     CONFIG['dataset_name'],  
                                     f"{CONFIG['model']}_{CONFIG['task']}", 
                                     f"{time_path}@{CONFIG['note']}", 
@@ -95,6 +95,7 @@ def main():
 
         # op
         op = optim.Adam(model.parameters(), lr=lr)
+
         # env
         env = {'lr': lr,
                'op': str(op).split(' ')[0],   # Adam

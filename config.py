@@ -26,8 +26,8 @@ CONFIG = {
     'decays': [1e-7],
 
     ## hard negative sample and further train
-    'sample': 'simple',
-    #  'sample': 'hard',
+    # 'sample': 'simple',
+    'sample': 'hard',
     'hard_window': [0.7, 1.0], # top 30%
     'hard_prob': [0.4, 0.4], # probability 0.8
     'conti_train': 'model_file_from_simple_sample.pth',
