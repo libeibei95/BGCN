@@ -127,7 +127,7 @@ def main():
 
                     # test
                     if epoch % CONFIG['test_interval'] == 0:  
-                        output_metrics = test(model, epoch+1, test_loader, device, CONFIG, metrics)
+                        output_metrics = test(model, test_loader, device, CONFIG, metrics)
 
                         for metric in output_metrics:
                             test_writer.add_scalars('metric/all', {metric.get_title(): metric.metric}, epoch)

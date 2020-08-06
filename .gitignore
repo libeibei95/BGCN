@@ -3,3 +3,5 @@
 log/
 visual/
 __pycache__
+.idea/*
+.git/*
