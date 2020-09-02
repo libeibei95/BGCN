@@ -8,11 +8,13 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from time import time
 import os
+import logging
 
 def test(model, loader, device, CONFIG, metrics):
     '''
     test for dot-based model
     '''
+    logger = logging.getLogger('test')
     model.eval()
     for metric in metrics:
         metric.start()
@@ -24,10 +26,10 @@ def test(model, loader, device, CONFIG, metrics):
             pred_b -= 1e8*train_mask_u_b.to(device)
             for metric in metrics:
                 metric(pred_b, ground_truth_u_b.to(device))
-    print('Test: time={:d}s'.format(int(time()-start)))
+    logger.info('Test: time={:d}s'.format(int(time()-start)))
     for metric in metrics:
         metric.stop()
-        print('{}:{}'.format(metric.get_title(), metric.metric), end='\t')
-    print('')
+        logger.info('{}:{}'.format(metric.get_title(), metric.metric), end='\t')
+    logger.info('')
     return metrics
 

@@ -7,6 +7,7 @@ import numpy as np
 import scipy.sparse as sp 
 from torch.utils.data import Dataset
 from config import CONFIG
+import logging
 
 
 def sparse_ones(indices, size, dtype=torch.float):
@@ -22,14 +23,14 @@ def to_tensor(graph):
     return graph
 
 def print_statistics(X, string):
-    print('>'*10 + string + '>'*10)
-    print('average interactions', X.sum(1).mean(0).item())
+    logger.info('>'*10 + string + '>'*10)
+    logger.info('average interactions', X.sum(1).mean(0).item())
     nonzero_row_indice, nonzero_col_indice = X.nonzero()
     unique_nonzero_indice_u = np.unique(nonzero_row_indice)
     unique_nonzero_indice_b = np.unique(nonzero_col_indice)
-    print(len(unique_nonzero_indice_u)/X.shape[0])
-    print(len(unique_nonzero_indice_b)/X.shape[1])
-    print('density', len(nonzero_row_indice)/(X.shape[0]*X.shape[1]))
+    logger.info(len(unique_nonzero_indice_u)/X.shape[0])
+    logger.info(len(unique_nonzero_indice_b)/X.shape[1])
+    logger.info('density', len(nonzero_row_indice)/(X.shape[0]*X.shape[1]))
 
 
 class BasicDataset(Dataset):
@@ -207,15 +208,16 @@ class AssistDataset(BasicDataset):
 
 
 def get_dataset(path, name, task='tune', seed=123):
+    logger = logger = logging.getLogger('dataset')
     assist_data = AssistDataset(path, name)
-    print('finish loading assist data')
+    logger.info('finish loading assist data')
     item_data = ItemDataset(path, name, assist_data, seed=seed)
-    print('finish loading item data')
+    logger.info('finish loading item data')
 
     bundle_train_data = BundleTrainDataset(path, name, item_data, assist_data, seed=seed)
-    print('finish loading bundle train data')
+    logger.info('finish loading bundle train data')
     bundle_test_data = BundleTestDataset(path, name, bundle_train_data, task=task)
-    print('finish loading bundle test data')
+    logger.info('finish loading bundle test data')
 
     return bundle_train_data, bundle_test_data, item_data, assist_data
 

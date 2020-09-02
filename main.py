@@ -21,7 +21,16 @@ from itertools import product
 import time
 #  from utils.visshow import VisShow
 from tensorboardX import SummaryWriter
+import logging
 
+
+if not os.path.exists('log'):
+    os.mkdir('log')
+
+logging.basicConfig(format="%(asctime)s %(name)s:%(levelname)s:%(message)s",
+                    filename="log/{}.log".format(time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())),
+                    level=logging.INFO)
+logger = logging.getLogger('main')
 
 def main():
     #  set env
@@ -51,7 +60,7 @@ def main():
     #  pretrain
     if 'pretrain' in CONFIG:
         pretrain = torch.load(CONFIG['pretrain'], map_location='cpu')
-        print('load pretrain')
+        logger.info('load pretrain')
 
     #  graph
     ub_graph = bundle_train_data.ground_truth_u_b
@@ -108,7 +117,7 @@ def main():
         #  continue training
         if CONFIG['sample'] == 'hard' and 'conti_train' in CONFIG:
             model.load_state_dict(torch.load(CONFIG['conti_train']))
-            print('load model and continue training')
+            logger.info('load model and continue training')
 
         retry = CONFIG['retry']  # =1
         while retry >= 0:

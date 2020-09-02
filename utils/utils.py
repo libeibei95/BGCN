@@ -4,7 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from math import ceil
-
+import logging
 
 def show(metrics_log):
     x = range(0, len(list(metrics_log.values())[0]))
@@ -23,6 +23,7 @@ def show(metrics_log):
 
 def get_perf(metrics_log, window_size, target, show=True):
     # max
+    logger = logging.getLogger('util')
     maxs = {title: 0 for title in metrics_log.keys()}
     assert target in maxs
     length = len(metrics_log[target])
@@ -39,25 +40,26 @@ def get_perf(metrics_log, window_size, target, show=True):
                     maxs[k] = np.mean(v[i:i+window_size])
     if show:
         for k, v in maxs.items():
-            print('{}:{:.5f}'.format(k, v), end=' ')
+            logger.info('{}:{:.5f}'.format(k, v), end=' ')
     return maxs
 
 
 def check_overfitting(metrics_log, target, threshold=0.02, show=False):
+    logger = logging.getLogger('util')
     maxs = get_perf(metrics_log, 1, target, False)
     assert target in maxs
     overfit = (maxs[target]-metrics_log[target][-1]) > threshold
     if overfit and show:
-        print('***********overfit*************')
-        print('best:', end=' ')
+        logger.info('***********overfit*************')
+        logger.info('best:', end=' ')
         for k, v in maxs.items():
-            print('{}:{:.5f}'.format(k, v), end=' ')
-        print('')
-        print('now:', end=' ')
+            logger.info('{}:{:.5f}'.format(k, v), end=' ')
+        logger.info('')
+        logger.info('now:', end=' ')
         for k, v in metrics_log.items():
-            print('{}:{:.5f}'.format(k, v[-1]), end=' ')
-        print('')
-        print('***********overfit*************')
+            logger.info('{}:{:.5f}'.format(k, v[-1]), end=' ')
+        logger.info('')
+        logger.info('***********overfit*************')
     return overfit
 
 

@@ -7,8 +7,10 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from time import time
 import os
+import logging
 
 def train(model, epoch, loader, optim, device, CONFIG, loss_func):
+    logger = logging.getLogger('train')
     log_interval = CONFIG['log_interval']
     model.train()
     start = time()
@@ -20,9 +22,9 @@ def train(model, epoch, loader, optim, device, CONFIG, loss_func):
         loss.backward()
         optim.step()
         if i % log_interval == 0:
-            print('U-B Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+            logger.info('U-B Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, (i+1) * loader.batch_size, len(loader.dataset),
                 100. * (i+1) / len(loader), loss))
-    print('Train Epoch: {}: time = {:d}s'.format(epoch, int(time()-start)))
+    logger.info('Train Epoch: {}: time = {:d}s'.format(epoch, int(time()-start)))
     return loss
 

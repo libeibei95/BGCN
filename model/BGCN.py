@@ -8,6 +8,8 @@ import scipy.sparse as sp
 import numpy as np
 from .model_base import Info, Model
 from config import CONFIG
+import logging
+
 
 
 def graph_generating(raw_graph, row, col):
@@ -33,8 +35,8 @@ def to_tensor(graph):
     return graph
 
 def print_graph_density(graph, name):
-    print(name + ' density--------------------')
-    print(len(graph.data)/(graph.shape[0]*graph.shape[1])) 
+    logger.info(name + ' density--------------------')
+    logger.info(len(graph.data)/(graph.shape[0]*graph.shape[1]))
 
 
 class BGCN_Info(Info):
@@ -55,6 +57,9 @@ class BGCN(Model):
 
     def __init__(self, info, dataset, raw_graph, device, pretrain=None):
         super().__init__(info, dataset, create_embeddings=True)
+
+        logger = logging.getLogger('model')
+
         self.items_feature = nn.Parameter(
             torch.FloatTensor(self.num_items, self.embedding_size))
         nn.init.xavier_normal_(self.items_feature)
@@ -82,7 +87,7 @@ class BGCN(Model):
         else:
             raise ValueError(r"raw_graph's shape is wrong")
         self.atom_graph = to_tensor(laplace_transform(atom_graph)).to(device)
-        print('finish generating atom graph')
+        logger.info('finish generating atom graph')
  
         if ub_graph.shape == (self.num_users, self.num_bundles) \
                 and bb_graph.shape == (self.num_bundles, self.num_bundles):
@@ -92,10 +97,10 @@ class BGCN(Model):
         else:
             raise ValueError(r"raw_graph's shape is wrong")
         self.non_atom_graph = to_tensor(laplace_transform(non_atom_graph)).to(device)
-        print('finish generating non-atom graph')
+        logger.info('finish generating non-atom graph')
 
         self.pooling_graph = to_tensor(bi_graph).to(device)
-        print('finish generating pooling graph')
+        logger.info('finish generating pooling graph')
 
         # copy from info
         self.act = self.info.act
